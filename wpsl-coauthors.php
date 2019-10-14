@@ -79,7 +79,47 @@ function wpsl_coauthors_map_meta_cap($caps, $cap, $user_id, $args) {
   return $caps;
 }
 
+/**
+ * Adds a new Store Locations widget and removes the activity widget
+ */
+function wpsl_coauthors_dashboard_widgets() {
+  global $wp_meta_boxes;
+
+  $user = wp_get_current_user();
+
+  if (in_array("wpsl_store_coauthor", $user->roles)) {
+    //Add the Store list widget
+    wp_add_dashboard_widget('wpsl_coauthors_my_stores_widget', 'Store Locations', 'wpsl_coauthors_my_stores_widget');
+
+    //Remove the activity widget
+    if(array_key_exists("dashboard_activity",  $wp_meta_boxes['dashboard']['normal']['core'])) {
+      unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_activity']);
+    }
+  }
+}
+
+/**
+ * Creates the new Store Locations Widget with links to the
+ * store locations that the user is co-author of.
+ */
+function wpsl_coauthors_my_stores_widget() {
+  global $current_user;
+  get_currentuserinfo();
+
+  $args = [
+      'author' => $current_user->ID,
+      'post_type' => "wpsl_stores",
+      'suppress_filters' => false
+  ];
+  $stores = get_posts($args);
+
+  foreach ($stores as $store) {
+    echo edit_post_link("Edit Details", "<p>".$store->post_title." - ", "</p>", $store);
+  }
+}
+
 //Register the needed hooks/filters
 register_activation_hook( __FILE__, 'wpsl_coauthors_plugin_activate' );
 register_deactivation_hook( __FILE__, 'wpsl_coauthors_plugin_deactivate' );
 add_filter( 'map_meta_cap', 'wpsl_coauthors_map_meta_cap', 10, 4);
+add_action('wp_dashboard_setup', 'wpsl_coauthors_dashboard_widgets');
