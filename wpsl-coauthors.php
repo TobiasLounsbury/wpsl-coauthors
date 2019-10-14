@@ -44,14 +44,19 @@ function wpsl_coauthors_plugin_activate() {
   if ( is_object( $wp_roles ) ) {
     add_role( 'wpsl_store_coauthor', 'Store Locator: Co-Author', array(
         'read'                   => true,
-        'edit_posts'             => true,
-        'edit_published_posts'   => true,
-        'publish_posts'          => true,
+        'publish_stores'          => true,
         'edit_store'             => true,
         'read_store'             => true
     ) );
   }
 
+}
+
+/**
+ * Remove the role created on activation
+ */
+function wpsl_coauthors_plugin_deactivate() {
+  remove_role( 'wpsl_store_coauthor' );
 }
 
 /**
@@ -76,4 +81,5 @@ function wpsl_coauthors_map_meta_cap($caps, $cap, $user_id, $args) {
 
 //Register the needed hooks/filters
 register_activation_hook( __FILE__, 'wpsl_coauthors_plugin_activate' );
+register_deactivation_hook( __FILE__, 'wpsl_coauthors_plugin_deactivate' );
 add_filter( 'map_meta_cap', 'wpsl_coauthors_map_meta_cap', 10, 4);
