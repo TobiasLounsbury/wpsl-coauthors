@@ -42,21 +42,49 @@ function wpsl_coauthors_plugin_activate() {
   }
 
   if ( is_object( $wp_roles ) ) {
-    add_role( 'wpsl_store_coauthor', 'Store Locator: Co-Author', array(
-        'read'                   => true,
-        'publish_stores'          => true,
-        'edit_store'             => true,
-        'read_store'             => true
-    ) );
-  }
 
+    //Create new role
+    add_role( 'wpsl_store_coauthor', 'Store Locator: Co-Author', array(
+        'read'                    => true,
+        'publish_stores'          => true,
+        'manage_store_categories' => true,
+        'assign_store_categories' => true,
+        'edit_store'              => true,
+        'read_store'              => true
+    ) );
+
+
+    //Assign some capabilities to the administrator role so we
+    //don't end up locking the admin out of editing the category taxonomy
+    $wp_roles->add_cap( 'administrator', "manage_store_categories");
+    $wp_roles->add_cap( 'administrator', "delete_store_categories");
+    $wp_roles->add_cap( 'administrator', "edit_store_categories");
+    $wp_roles->add_cap( 'administrator', "assign_store_categories");
+  }
 }
 
 /**
  * Remove the role created on activation
  */
 function wpsl_coauthors_plugin_deactivate() {
+
+  //Remove the custom coauthor role we created
   remove_role( 'wpsl_store_coauthor' );
+
+
+  //remove the "*_store_categories" caps from the admin role
+  if ( class_exists( 'WP_Roles' ) ) {
+    if ( !isset( $wp_roles ) ) {
+      $wp_roles = new WP_Roles();
+    }
+  }
+
+  if ( is_object( $wp_roles ) ) {
+    $wp_roles->remove_cap( 'administrator', "manage_store_categories");
+    $wp_roles->remove_cap( 'administrator', "delete_store_categories");
+    $wp_roles->remove_cap( 'administrator', "edit_store_categories");
+    $wp_roles->remove_cap( 'administrator', "assign_store_categories");
+  }
 }
 
 /**
@@ -70,6 +98,10 @@ function wpsl_coauthors_plugin_deactivate() {
  */
 function wpsl_coauthors_map_meta_cap($caps, $cap, $user_id, $args) {
   $postId = (isset($args[0]) ? $args[0] : null);
+
+  if($cap === "edit_store_categories") {
+    $caps = ['manage_store_categories'];
+  }
   if($cap === "edit_post" && $postId && get_post_type($postId) == "wpsl_stores") {
     if(function_exists("is_coauthor_for_post") && is_coauthor_for_post( $user_id, $postId )) {
       return ["edit_store"];
@@ -114,12 +146,33 @@ function wpsl_coauthors_my_stores_widget() {
   $stores = get_posts($args);
 
   foreach ($stores as $store) {
-    echo edit_post_link("Edit Details", "<p>".$store->post_title." - ", "</p>", $store);
+    echo edit_post_link("Edit Details", "<p class='wpsl-coauthor-row'>".$store->post_title." - ", "</p>", $store, "wpsl-coauthor-link post-edit-link");
   }
 }
+
+/**
+ *
+ */
+function wpsl_coauthors_alter_category_args($args) {
+
+  if(!array_key_exists("capabilities", $args)) {
+    $args['capabilities'] = array();
+  }
+
+  $args['capabilities']['manage_terms'] = 'manage_store_categories';
+  $args['capabilities']['delete_terms'] = 'delete_store_categories';
+  $args['capabilities']['edit_terms']   = 'edit_store_categories';
+  $args['capabilities']['assign_terms'] = 'assign_store_categories';
+
+  return $args;
+}
+
 
 //Register the needed hooks/filters
 register_activation_hook( __FILE__, 'wpsl_coauthors_plugin_activate' );
 register_deactivation_hook( __FILE__, 'wpsl_coauthors_plugin_deactivate' );
+
 add_filter( 'map_meta_cap', 'wpsl_coauthors_map_meta_cap', 10, 4);
-add_action('wp_dashboard_setup', 'wpsl_coauthors_dashboard_widgets');
+add_filter( 'wpsl_store_category_args', 'wpsl_coauthors_alter_category_args');
+
+add_action('wp_dashboard_setup', 'wpsl_coauthors_dashboard_widgets', 99);
