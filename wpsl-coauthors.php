@@ -16,6 +16,7 @@
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path:       /languages
+ * Text Domain:       wpsl-ca
  * GitHub Plugin URI: https://github.com/TobiasLounsbury/wpsl-coauthors
  */
 
@@ -121,7 +122,7 @@ function wpsl_coauthors_dashboard_widgets() {
 
   if (in_array("wpsl_store_coauthor", $user->roles)) {
     //Add the Store list widget
-    wp_add_dashboard_widget('wpsl_coauthors_my_stores_widget', 'Store Locations', 'wpsl_coauthors_my_stores_widget');
+    wp_add_dashboard_widget('wpsl_coauthors_my_stores_widget', __('Store Locations', "wpsl-ca"), 'wpsl_coauthors_my_stores_widget');
 
     //Remove the activity widget
     if(array_key_exists("dashboard_activity",  $wp_meta_boxes['dashboard']['normal']['core'])) {
@@ -146,7 +147,7 @@ function wpsl_coauthors_my_stores_widget() {
   $stores = get_posts($args);
 
   foreach ($stores as $store) {
-    echo edit_post_link("Edit Details", "<p class='wpsl-coauthor-row'>".$store->post_title." - ", "</p>", $store, "wpsl-coauthor-link post-edit-link");
+    echo edit_post_link(__("Edit Details", "wpsl-ca"), "<p class='wpsl-coauthor-row'>".$store->post_title." - ", "</p>", $store, "wpsl-coauthor-link post-edit-link");
   }
 }
 
