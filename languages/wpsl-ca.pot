@@ -1,0 +1,43 @@
+# Copyright (C) 2019 Tobias Lounsbury
+# This file is distributed under the same license as the Store Locator: Co-Authors plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Store Locator: Co-Authors 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpsl-coauthors\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2019-10-15T07:47:48-07:00\n"
+"PO-Revision-Date: 2019-10-15T07:47:48-07:00\n"
+"X-Generator: WP-CLI 2.0.1\n"
+"X-Domain: wpsl-ca\n"
+
+#. Plugin Name of the plugin
+msgid "Store Locator: Co-Authors"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://github.com/TobiasLounsbury/wpsl-coauthors"
+msgstr ""
+
+#. Description of the plugin
+msgid "Adds permission hooks to allow co-authors provided via Co-Authors+ to edit metadata for individual store locations"
+msgstr ""
+
+#. Author of the plugin
+msgid "Tobias Lounsbury"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://TobiasLounsbury.com"
+msgstr ""
+
+#: wpsl-coauthors.php:125
+msgid "Store Locations"
+msgstr ""
+
+#: wpsl-coauthors.php:150
+msgid "Edit Details"
+msgstr ""
