@@ -98,15 +98,21 @@ function wpsl_coauthors_plugin_deactivate() {
  * @return array
  */
 function wpsl_coauthors_map_meta_cap($caps, $cap, $user_id, $args) {
+  global $action;
   $postId = (isset($args[0]) ? $args[0] : null);
 
   if($cap === "edit_store_categories") {
     $caps = ['manage_store_categories'];
   }
+
   if($cap === "edit_post" && $postId && get_post_type($postId) == "wpsl_stores") {
     if(function_exists("is_coauthor_for_post") && is_coauthor_for_post( $user_id, $postId )) {
       return ["edit_store"];
     }
+  }
+
+  if($cap === "edit_posts" && $action == "coauthors_ajax_suggest" && $_REQUEST['post_type'] == "wpsl_stores") {
+    return ["edit_store"];
   }
 
   return $caps;
