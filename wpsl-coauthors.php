@@ -142,8 +142,7 @@ function wpsl_coauthors_dashboard_widgets() {
  * store locations that the user is co-author of.
  */
 function wpsl_coauthors_my_stores_widget() {
-  global $current_user;
-  get_currentuserinfo();
+  $current_user = wp_get_current_user();
 
   $args = [
       'author' => $current_user->ID,
