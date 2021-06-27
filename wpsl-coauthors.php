@@ -147,7 +147,8 @@ function wpsl_coauthors_my_stores_widget() {
   $args = [
       'author' => $current_user->ID,
       'post_type' => "wpsl_stores",
-      'suppress_filters' => false
+      'suppress_filters' => false,
+      'numberposts' => -1
   ];
   $stores = get_posts($args);
 
